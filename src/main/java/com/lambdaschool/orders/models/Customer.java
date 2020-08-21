@@ -58,10 +58,6 @@ public class Customer {
         return custcode;
     }
 
-    public void setCustcode(long custcode) {
-        this.custcode = custcode;
-    }
-
     public String getName() {
         return name;
     }
@@ -126,6 +122,14 @@ public class Customer {
         this.paymentamt = paymentamt;
     }
 
+    public double getOustandingamt() {
+        return oustandingamt;
+    }
+
+    public void setOustandingamt(double oustandingamt) {
+        this.oustandingamt = oustandingamt;
+    }
+
     public String getPhone() {
         return phone;
     }
@@ -140,5 +144,13 @@ public class Customer {
 
     public void setAgent(Agent agent) {
         this.agent = agent;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }

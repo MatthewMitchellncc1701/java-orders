@@ -1,5 +1,6 @@
 package com.lambdaschool.orders;
 
+import com.github.javafaker.Faker;
 import com.lambdaschool.orders.models.Agent;
 import com.lambdaschool.orders.models.Customer;
 import com.lambdaschool.orders.models.Order;
@@ -12,6 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Set;
 
 
 @Transactional
@@ -58,10 +64,14 @@ public class SeedData implements CommandLineRunner {
         Payment pay3 = new Payment("Credit Card");
         Payment pay4 = new Payment("Mobile Pay");
 
+        //only used for random
+        Payment pay5 = new Payment("Magic");
+
         pay1 = paymentrepos.save(pay1);
         pay2 = paymentrepos.save(pay2);
         pay3 = paymentrepos.save(pay3);
         pay4 = paymentrepos.save(pay4);
+        pay5 = paymentrepos.save(pay5);
 
         Agent a01 = new Agent("Ramasundar",
                 "Bangalore",
@@ -123,6 +133,9 @@ public class SeedData implements CommandLineRunner {
                 0.11,
                 "008-22536178",
                 "");
+
+        //agent for all random customer
+        Agent a13 = new Agent("Rando", "Space", 0.42, "555-5555555", "");
 
         Customer c01 = new Customer("Holmes",
                 "London",
@@ -485,6 +498,8 @@ public class SeedData implements CommandLineRunner {
         agentrepos.save(a10);
         agentrepos.save(a11);
         agentrepos.save(a12);
+        agentrepos.save(a13);
+
 
         custrepos.save(c01);
         custrepos.save(c02);
@@ -524,5 +539,40 @@ public class SeedData implements CommandLineRunner {
         ordersrepos.save(o10);
         ordersrepos.save(o11);
         ordersrepos.save(o12);
+
+        // Stretch Goal
+
+        Faker nameFaker = new Faker(new Locale("en-US"));
+
+        Set<String> custNamesSet = new HashSet<>();
+        for (int i = 0; i < 100; i++) {
+            custNamesSet.add(nameFaker.name().firstName());
+        }
+
+        for (String custName : custNamesSet) {
+            Random random = new Random();
+
+            Customer customer = new Customer();
+            customer.setName(custName);
+            customer.setCustcity(nameFaker.address().city());
+            customer.setWorkingarea(nameFaker.address().city());
+            customer.setCustcountry(nameFaker.country().name());
+            customer.setGrade(""+random.nextInt(10));
+            customer.setOpeningamt(random.nextDouble() * 10000.00);
+            customer.setRecieveamt(random.nextDouble() * 10000.00);
+            customer.setPaymentamt(random.nextDouble() * 10000.00);
+            customer.setOustandingamt(random.nextDouble() * 10000.00);
+            customer.setPhone("" + nameFaker.phoneNumber());
+            customer.setAgent(a13); //hard coded
+            custrepos.save(customer);
+
+            int numOrders = random.nextInt(11);
+
+            for (int i = 0; i < numOrders; i++) {
+                Order order = new Order(random.nextDouble() * 10000.00, random.nextDouble() * 1000.00, customer, "RAN");
+                order.addPayments(pay5);
+                ordersrepos.save(order);
+            }
+        }
     }
 }
